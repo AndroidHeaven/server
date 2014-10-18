@@ -43,12 +43,11 @@ app.all('*', function(req, res, next) {
 
 app.post('/upload', function(req, res) {
   console.log("f",req.files.file);
-  console.log("buffer",req.files.file.buffer);
 
   var zip = req.files.file.path;
 
   sa
-  .post('http://dubhacks-bb.ngrok.com/create')
+  .post('localhost:3000/create')
   .attach('file', zip)
   .end(function(error, res){
     console.log("resp: ",res);
@@ -63,4 +62,4 @@ app.post('/upload', function(req, res) {
   // res.redirect('/success');
 });
 
-app.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT || 3001);
