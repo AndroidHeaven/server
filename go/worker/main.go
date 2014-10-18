@@ -84,6 +84,7 @@ func createCompileAPK(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	r.ParseForm()
 	ipaID := r.Form.Get("ipa_id")
 	name := r.Form.Get("name")
 
