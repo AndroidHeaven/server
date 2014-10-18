@@ -22,6 +22,6 @@ run find . -type f -name "*.java" -exec sed -i '' -e "s/{{IPA_ID}}/$ipa_id/" {} 
 run find . -type f -name "AndroidManifest.xml" -exec sed -i '' -e "s/{{APP_NAME}}/$app_name/" {} \;
 run ./gradlew assembleDebug
 run mkdir -p $start_dir/artifacts && \
-	cp app/build/outputs/apk/app-debug.apk $start_dir/artifacts/
+	cp app/build/outputs/apk/app-debug.apk $start_dir/artifacts/output.apk
 run cd $start_dir
 run rm -rf $dest_dir
