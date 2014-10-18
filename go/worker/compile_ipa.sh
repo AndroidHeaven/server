@@ -4,6 +4,10 @@
 #
 # Output: Stores compiled .app in the ./artifacts directory.
 
+echo "\n**********************"
+echo "*    COMPILE IPA     *"
+echo "**********************"
+
 error () { echo $1; exit; }
 run () { echo; echo \$ $*; $*; }
 

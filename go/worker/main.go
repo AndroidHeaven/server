@@ -85,10 +85,12 @@ func createCompileAPK(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	r.ParseForm()
 	ipaID := r.Form.Get("ipa_id")
 	name := r.Form.Get("name")
 
-	cmd := exec.Command(fmt.Sprintf("%s/generate_apk.sh", cwd), ipaID, name)
+	cmd := exec.Command(fmt.Sprintf("%s/generate_apk.sh", cwd),
+		fmt.Sprintf("%s/android_base", cwd), ipaID, name)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Dir = tmpWorkDir
@@ -97,18 +99,13 @@ func createCompileAPK(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	artifact, err := os.Open(fmt.Sprintf("%s/artifacts/output.apk", cwd))
+	artifact, err := os.Open(fmt.Sprintf("%s/artifacts/output.apk", tmpWorkDir))
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
 	if _, err := io.Copy(w, artifact); err != nil {
-		log.Println(err)
-		return
-	}
-
-	if err := os.RemoveAll(tmpWorkDir); err != nil {
 		log.Println(err)
 		return
 	}
