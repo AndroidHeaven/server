@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 )
 
@@ -35,6 +36,20 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sum := fmt.Sprintf("%x", md5.Sum(buf.Bytes()))
+
+	resp, err = http.PostForm(
+		"https://dubhacks-worker-1.ngrok.com/create_generate_apk",
+		url.Values{"ipa_id": {sum}, "name": {"Example Name"}})
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	file, err = os.Create("output.apk")
+	if err != nil {
+		log.Println(err)
+		return
+	}
 }
 
 func main() {
