@@ -12,6 +12,7 @@ import (
 )
 
 func createCompileIPA(w http.ResponseWriter, r *http.Request) {
+	log.Println("Compiling IPA started...")
 	tmpDir := fmt.Sprintf("/tmp/%s", uuid.NewRandom().String())
 	tmpWorkDir := fmt.Sprintf("%s/work", tmpDir)
 	tmpFilename := fmt.Sprintf("%s/%s", tmpDir, uuid.NewRandom().String())
@@ -52,6 +53,7 @@ func createCompileIPA(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+	log.Println("Compiling IPA finished and archive saved...")
 
 	artifact, err := os.Open(fmt.Sprintf("%s/artifacts/artifact.tar.gz",
 		tmpWorkDir))
@@ -60,19 +62,16 @@ func createCompileIPA(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("Sending over the wire in response...")
 	defer artifact.Close()
 	if _, err := io.Copy(w, artifact); err != nil {
-		log.Println(err)
-		return
-	}
-
-	if err := os.RemoveAll(tmpDir); err != nil {
 		log.Println(err)
 		return
 	}
 }
 
 func createCompileAPK(w http.ResponseWriter, r *http.Request) {
+	log.Println("Starting generation of APK...")
 	tmpWorkDir := fmt.Sprintf("/tmp/%s", uuid.NewRandom().String())
 	if err := os.Mkdir(tmpWorkDir, 0777); err != nil {
 		log.Println(err)
@@ -89,8 +88,8 @@ func createCompileAPK(w http.ResponseWriter, r *http.Request) {
 	ipaID := r.Form.Get("ipa_id")
 	name := r.Form.Get("name")
 
-	cmd := exec.Command(fmt.Sprintf("%s/generate_apk.sh", cwd),
-		fmt.Sprintf("%s/android_base", cwd), ipaID, name)
+	log.Println("Running generate_apk.sh script")
+	cmd := exec.Command(fmt.Sprintf("%s/generate_apk.sh", cwd), ipaID, name)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Dir = tmpWorkDir
@@ -99,12 +98,14 @@ func createCompileAPK(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	artifact, err := os.Open(fmt.Sprintf("%s/artifacts/output.apk", tmpWorkDir))
+	log.Println("Script run completed, archiving artifact")
+	artifact, err := os.Open(fmt.Sprintf("%s/artifacts/output.apk", cwd))
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
+	log.Println("Writing artifact to response")
 	if _, err := io.Copy(w, artifact); err != nil {
 		log.Println(err)
 		return
