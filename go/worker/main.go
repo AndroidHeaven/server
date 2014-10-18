@@ -69,7 +69,7 @@ func createCompileIPA(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Removed temp files...")
+	log.Println("Removing temp files...")
 	if err := os.RemoveAll(tmpDir); err != nil {
 		log.Println(err)
 		return
