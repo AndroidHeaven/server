@@ -88,7 +88,8 @@ func createCompileAPK(w http.ResponseWriter, r *http.Request) {
 	name := r.Form.Get("name")
 
 	log.Println("Running generate_apk.sh script")
-	cmd := exec.Command(fmt.Sprintf("%s/generate_apk.sh", cwd), ipaID, name)
+	cmd := exec.Command(fmt.Sprintf("%s/generate_apk.sh", cwd),
+		fmt.Sprintf("%s/android_base", cwd), ipaID, name)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Dir = tmpWorkDir
