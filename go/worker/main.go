@@ -62,7 +62,7 @@ func createCompileIPA(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Compiling IPA finished and archive saved...")
+	log.Println("Sending over the wire in response...")
 	defer artifact.Close()
 	if _, err := io.Copy(w, artifact); err != nil {
 		log.Println(err)
