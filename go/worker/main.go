@@ -68,12 +68,6 @@ func createCompileIPA(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-
-	log.Println("Removing temp files...")
-	if err := os.RemoveAll(tmpDir); err != nil {
-		log.Println(err)
-		return
-	}
 }
 
 func createCompileAPK(w http.ResponseWriter, r *http.Request) {
