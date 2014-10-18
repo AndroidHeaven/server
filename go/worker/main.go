@@ -12,6 +12,7 @@ import (
 )
 
 func createCompileIPA(w http.ResponseWriter, r *http.Request) {
+	log.Println("Compiling IPA started...")
 	tmpDir := fmt.Sprintf("/tmp/%s", uuid.NewRandom().String())
 	tmpWorkDir := fmt.Sprintf("%s/work", tmpDir)
 	tmpFilename := fmt.Sprintf("%s/%s", tmpDir, uuid.NewRandom().String())
@@ -52,6 +53,7 @@ func createCompileIPA(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+	log.Println("Compiling IPA finished and archive saved...")
 
 	artifact, err := os.Open(fmt.Sprintf("%s/artifacts/artifact.tar.gz",
 		tmpWorkDir))
@@ -60,12 +62,14 @@ func createCompileIPA(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("Compiling IPA finished and archive saved...")
 	defer artifact.Close()
 	if _, err := io.Copy(w, artifact); err != nil {
 		log.Println(err)
 		return
 	}
 
+	log.Println("Removed temp files...")
 	if err := os.RemoveAll(tmpDir); err != nil {
 		log.Println(err)
 		return
