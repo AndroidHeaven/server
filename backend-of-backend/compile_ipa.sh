@@ -24,3 +24,4 @@ run xcodebuild -arch i386 -sdk iphonesimulator
 run mkdir -p $start_dir/artifacts && \
 	cp -r build/Release-iphonesimulator/*.app $start_dir/artifacts/
 run cd $start_dir && rm -rf $dest_dir
+run cd artifacts/ && tar czf artifact.tar.gz $(find . -d 1 -type d)

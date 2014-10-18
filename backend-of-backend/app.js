@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
+var fs = require('fs');
 var exec = require('child_process').exec;
 
 var STATE_READY = 0;
@@ -25,16 +26,22 @@ app.post('/create', function(req, res) {
   }
   var zip = req.files.file;
 
-  exec('./compile_ipa.sh '+process.cwd()+'/'+zip.path, {cwd: process.cwd()},
-    function(error, stdout, stderr) {
-    console.log('stdout: ', stdout);
-    console.log('stderr: ', stderr);
+  exec('./compile_ipa.sh '+process.cwd()+'/'+zip.path, {cwd: process.cwd()}, function(error, stdout, stderr) {
     if (error !== null) {
       console.log('exec error: ', error);
     }
+    var path = process.cwd()+'/'+'./artifacts/artifact.tar.gz';
+    res.download(path, null, function(err){
+      if (err) {
+        console.log(err);
+        res.status(err.status).end();
+      }
+      else {
+        console.log('Sent:', path);
+      }
+      exec('rm -rf '+process.cwd()+'/artifacts');
+    });
   });
-
-  res.send(zip);
 });
 
 app.listen(process.env.PORT || 3000);
