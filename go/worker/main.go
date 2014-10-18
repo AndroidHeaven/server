@@ -107,6 +107,11 @@ func createCompileAPK(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+
+	if err := os.RemoveAll(tmpWorkDir); err != nil {
+		log.Println(err)
+		return
+	}
 }
 
 func main() {
