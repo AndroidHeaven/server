@@ -71,6 +71,7 @@ func createCompileIPA(w http.ResponseWriter, r *http.Request) {
 }
 
 func createCompileAPK(w http.ResponseWriter, r *http.Request) {
+	log.Println("Starting generation of APK...")
 	tmpWorkDir := fmt.Sprintf("/tmp/%s", uuid.NewRandom().String())
 	if err := os.Mkdir(tmpWorkDir, 0777); err != nil {
 		log.Println(err)
@@ -86,6 +87,7 @@ func createCompileAPK(w http.ResponseWriter, r *http.Request) {
 	ipaID := r.Form.Get("ipa_id")
 	name := r.Form.Get("name")
 
+	log.Println("Running generate_apk.sh script")
 	cmd := exec.Command(fmt.Sprintf("%s/generate_apk.sh", cwd), ipaID, name)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -95,18 +97,15 @@ func createCompileAPK(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("Script run completed, archiving artifact")
 	artifact, err := os.Open(fmt.Sprintf("%s/artifacts/output.apk", cwd))
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
+	log.Println("Writing artifact to response")
 	if _, err := io.Copy(w, artifact); err != nil {
-		log.Println(err)
-		return
-	}
-
-	if err := os.RemoveAll(tmpWorkDir); err != nil {
 		log.Println(err)
 		return
 	}
